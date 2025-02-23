@@ -1,0 +1,4 @@
+discord.py
+web3
+eth-account
+python-dotenv 
