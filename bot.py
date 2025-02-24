@@ -78,26 +78,19 @@ async def check_cooldown(user_id):
             return False
     return True
 
-# Cache para controle de mensagens e respostas
+# Melhorar o sistema de cache
 class ResponseCache:
     def __init__(self):
-        self.message_cache = {}
-        self.last_response = {}
-        self.version = BOT_VERSION
+        self.message_cache = set()
     
-    def has_responded(self, command, message_id):
-        return message_id in self.message_cache.get(f"{self.version}_{command}", set())
+    def has_responded(self, message_id):
+        return message_id in self.message_cache
     
-    def add_response(self, command, message_id):
-        command_key = f"{self.version}_{command}"
-        if command_key not in self.message_cache:
-            self.message_cache[command_key] = set()
-        self.message_cache[command_key].add(message_id)
-        self.last_response[command_key] = message_id
+    def add_response(self, message_id):
+        self.message_cache.add(message_id)
     
     def clear(self):
         self.message_cache.clear()
-        self.last_response.clear()
 
 # Instanciar o cache
 cache = ResponseCache()
@@ -120,15 +113,18 @@ def is_mod(ctx):
 @bot.command(name='balance')
 @commands.cooldown(1, 3, commands.BucketType.user)
 async def check_balance(ctx):
+    # Verificar cache primeiro
+    if cache.has_responded(ctx.message.id):
+        return
+        
+    # Adicionar ao cache antes de processar
+    cache.add_response(ctx.message.id)
+    
     if not is_mod(ctx):
         await ctx.reply("❌ This command is only available to moderators.")
         return
-        
-    if cache.has_responded('balance', ctx.message.id):
-        return
     
     try:
-        cache.add_response('balance', ctx.message.id)
         balance = w3.eth.get_balance(FAUCET_ADDRESS)
         balance_eth = w3.from_wei(balance, 'ether')
         await ctx.reply(f'[{BOT_VERSION}] 💰 Current faucet balance: {balance_eth:.4f} MON')
@@ -215,10 +211,10 @@ async def can_request_tokens(ctx, address):
 @bot.command(name='faucet')
 @commands.cooldown(1, 3, commands.BucketType.user)
 async def send_tokens(ctx, address: str):
-    if cache.has_responded('faucet', ctx.message.id):
+    if cache.has_responded(ctx.message.id):
         return
     
-    cache.add_response('faucet', ctx.message.id)
+    cache.add_response(ctx.message.id)
     
     try:
         # Validações básicas
