@@ -227,8 +227,8 @@ async def send_tokens(ctx, address: str):
             return
 
         if not await check_cooldown(ctx.author.id):
-            remaining_time = 30  # segundos
-            await ctx.reply(f'⏳ Please wait {remaining_time} seconds before requesting again!')
+            remaining_time = COOLDOWN_HOURS
+            await ctx.reply(f'⏳ Please wait {remaining_time} hours before requesting again!')
             return
 
         faucet_balance = w3.eth.get_balance(FAUCET_ADDRESS)
