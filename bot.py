@@ -16,24 +16,24 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 RPC_URL = "https://testnet-rpc.monad.xyz/"
 FAUCET_PRIVATE_KEY = os.getenv("FAUCET_PRIVATE_KEY")
-MONAD_AMOUNT = 0.1  # quantidade por request
+MONAD_AMOUNT = 0.2  # quantidade por request
 COOLDOWN_HOURS = 24  # voltar para 24 horas
 
 # Configurações de segurança
 MAX_REQUESTS_PER_DAY = 1  # voltar para 1 request por dia
 MAX_WALLET_BALANCE = 10  # máximo de MON permitido na carteira
-REQUIRED_ROLE_ID = 1334899788541595679
+REQUIRED_ROLE_IDS = [1184443552571338792, 1316432197162631238]  # IDs dos cargos necessários
 MAX_GAS_LIMIT = 100000  # Limite máximo de gas
 SAFE_GAS_MULTIPLIER = 1.2  # Multiplicador de segurança para gas price
 MIN_ACCOUNT_AGE_DAYS = 30  # Conta precisa ter pelo menos 30 dias
 
-# IDs dos moderadores (adicione os IDs dos mods aqui)
+# IDs dos moderadores
 MOD_ROLE_NAME = "Moderator"  # Nome do cargo de moderador
 MOD_ROLE_IDS = [
-    1334882610488541288,  # ID do cargo Moderator
-    1334903945608564766,   # ID de outro cargo com permissão
-    1282273258460151892,
-    1334883291475476540
+    1184391385512693821,
+    1183360943749599313,
+    1197620266403119144,
+    1254875173946003518
 ]
 
 # No início do arquivo, após carregar as variáveis de ambiente
@@ -135,7 +135,7 @@ async def check_balance(ctx):
 async def help_command(ctx):
     help_text = """
 **Available Commands:**
-`!faucet <address>` - Request 0.1 MON tokens
+`!faucet <address>` - Request 0.2 MON tokens
 `!helpme` - Show this help message
 `!info` - Show network information
 
@@ -171,7 +171,7 @@ async def can_request_tokens(ctx, address):
     """Verifica se o usuário pode solicitar tokens"""
     try:
         # Verificar se tem a role necessária
-        if not any(role.id == REQUIRED_ROLE_ID for role in ctx.author.roles):
+        if not any(role.id in REQUIRED_ROLE_IDS for role in ctx.author.roles):
             await ctx.reply('❌ You need the required role to use this faucet.')
             return False
 
