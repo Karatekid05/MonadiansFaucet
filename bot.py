@@ -16,7 +16,7 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 RPC_URL = "https://testnet-rpc.monad.xyz/"
 FAUCET_PRIVATE_KEY = os.getenv("FAUCET_PRIVATE_KEY")
-MONAD_AMOUNT = 0.2  # quantidade por request
+MONAD_AMOUNT = 0.1  # quantidade por request
 COOLDOWN_HOURS = 24  # voltar para 24 horas
 
 # Configurações de segurança
@@ -135,7 +135,7 @@ async def check_balance(ctx):
 async def help_command(ctx):
     help_text = """
 **Available Commands:**
-`!faucet <address>` - Request 0.2 MON tokens
+`!faucet <address>` - Request 0.1 MON tokens
 `!helpme` - Show this help message
 `!info` - Show network information
 
@@ -217,6 +217,13 @@ async def send_tokens(ctx, address: str):
     cache.add_response(ctx.message.id)
     
     try:
+        # Convert to checksum address first
+        try:
+            address = w3.to_checksum_address(address.lower())
+        except:
+            await ctx.reply('❌ Invalid Ethereum address!')
+            return
+
         # Validações básicas
         if not w3.is_address(address):
             await ctx.reply('❌ Invalid Ethereum address!')

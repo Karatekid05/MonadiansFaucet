@@ -4,7 +4,7 @@ Discord bot for distributing MON tokens on Monad testnet.
 
 ## 📋 Features
 
-- Automatic distribution of 0.2 MON per request
+- Automatic distribution of 0.1 MON per request
 - 24-hour cooldown system between requests
 - Wallet balance verification
 - Discord account age verification
@@ -13,7 +13,7 @@ Discord bot for distributing MON tokens on Monad testnet.
 
 ## 🛠️ Commands
 
-- `!faucet <address>` - Request 0.2 MON tokens
+- `!faucet <address>` - Request 0.1 MON tokens
 - `!helpme` - Show help message
 - `!info` - Show network information
 - `!balance` - (Moderators only) Check faucet balance
